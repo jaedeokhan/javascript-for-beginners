@@ -1,28 +1,32 @@
 const loginForm = document.querySelector("#login-form");
 const loginInput = document.querySelector("#login-form input");
 const greeting = document.querySelector("#greeting");
+
 const HIDDEN_CLASSNAME = "hidden";
+const USERNAME_KEY = "username";
 
-function onLoginFormSubmit(event){
-    event.preventDefault();
-    const username = loginInput.value;
-    localStorage.setItem("username", username);
+function onLoginFormSubmit(event) {
+  event.preventDefault();
+  loginForm.classList.add(HIDDEN_CLASSNAME);
+  const username = loginInput.value;
+  localStorage.setItem(USERNAME_KEY, username);
+  paintGreetings();
+}
 
-    loginForm.classList.add(HIDDEN_CLASSNAME);
+// Greeting을 출력하는 함수
+function paintGreetings() {
+  const username = localStorage.getItem(USERNAME_KEY);  
+  greeting.innerText = `Hello ${username}`;    
+  greeting.classList.remove(HIDDEN_CLASSNAME);
+}
 
-    greeting.classList.remove(HIDDEN_CLASSNAME);
-    greeting.innerText = `Hello ${localStorage.getItem("username")} keep going`;
-};
+const savedUsername = localStorage.getItem(USERNAME_KEY);
 
-function checkLoginUser(){
-    const loginUser = localStorage.getItem("username");
-
-    if (loginUser !== null){
-        loginForm.classList.add(HIDDEN_CLASSNAME);
-        greeting.classList.remove(HIDDEN_CLASSNAME);
-        greeting.innerText = `Hello ${loginUser} keep going`;
-    }
-};
-
-loginForm.addEventListener("submit", onLoginFormSubmit);
-window.addEventListener("load", checkLoginUser);
+if (savedUsername === null) {
+  // show the form
+  loginForm.classList.remove(HIDDEN_CLASSNAME);
+  loginForm.addEventListener("submit", onLoginFormSubmit);
+} else {
+  // show the greeting
+  paintGreetings();
+}
