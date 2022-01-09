@@ -20,19 +20,19 @@ var myChart = new Chart(ctx, {
     labels: months,
     datasets: [{
       type: 'bar',
-      label: 'ORC', // sacles의 yAxes.id 와 연결
-      yAxisID: 'ORC',
+      label: 'ORC',  
+      yAxisID: 'ORC',  // sacles의 yAxes.id 와 연결
       borderColor: 'white',
       backgroundColor: 'rgba(137, 191, 255, 0.5)',
-      data: orcDatas,
+      data: orcDatas, 
     },{
       type: 'line',
       label: 'OpRWA 증감률',
-      yAxisID: 'OpRWA',
+      yAxisID: 'OpRWA', // sacles의 yAxes.id 와 연결
       borderColor: 'red',
       backgroundColor: 'white',
       data: percentDatas,
-      fill: false
+      fill: false 
     }]
   },
   options: {
@@ -48,16 +48,16 @@ var myChart = new Chart(ctx, {
             display : false // x축의 grid 라인 안 보이게
         }
       }],
-      yAxes: [{
-        scaleLabel: {
+      yAxes: [{ 
+        id: 'ORC',
+        position: 'left',
+        scaleLabel: { // 좌측 y 축 라벨 이름
             display: true,
             labelString: '(억원)',
         },
         gridLines : { 
             display : false // y축 ORC의 grid 라인 안 보이게
         },
-        id: 'ORC',
-        position: 'left',
         ticks: {
           min: 0,
           //max: 100,
@@ -71,6 +71,10 @@ var myChart = new Chart(ctx, {
         id: 'OpRWA',
         type: 'linear',
         position: 'right',
+        scaleLabel: { // 좌측 y 축 라벨 이름
+          display: true,
+          labelString: '(%)',
+        },
         ticks: {
           min: 0,
           max: 100,
@@ -91,7 +95,23 @@ var myChart = new Chart(ctx, {
         borderWidth: 1,
         //pointStyle: 'circle'
       }, 
-    }
-
+    },
+    // animation : {
+    //   duration : 1,
+    //   onComplete: function () {
+    //     var chartInstance = this.chart,
+    //       ctx = chartInstance.ctx;
+    //       ctx.textAlign = 'center';
+    //       ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    //       ctx.textBaseline = 'bottom';
+    //       this.data.datasets.forEach(function (dataset, i) {
+    //         var meta = chartInstance.controller.getDatasetMeta(i);
+    //         meta.data.forEach(function (bar, index) {
+    //           var data = dataset.data[index];
+    //           ctx.fillText(data, bar._model.x, bar._model.y - 5);
+    //         });
+    //       });
+    //     }
+    // }
   }
 });
