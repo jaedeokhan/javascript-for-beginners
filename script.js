@@ -268,32 +268,34 @@ var myChart = new Chart(ctx, {
       //position: 'nearest',
       // Disable the on-canvas tooltip
       //enabled: false,
-       enabled : true,
-       displayColors : false,
-       callbacks : {
-         title : function(tooltipItems, data){
-           console.log(data.datasets[tooltipItems.datasetIndex]);
-           return "2021년" + months[tooltipItems[0].index];
-         },
+      //  enabled : true,
+      //  displayColors : false,
+      //  callbacks : {
+      //    title : function(tooltipItems, data){
+      //      console.log(data.datasets[tooltipItems.datasetIndex]);
+      //      return "2021년" + months[tooltipItems[0].index];
+      //    },
 
-         beforeBody : function(tooltipItems, data){
-           return "\r";
-         },
+      //    beforeBody : function(tooltipItems, data){
+      //      return "\r";
+      //    },
 
-         beforeLabel : function(tooltipItems, data){
-           return "BI : " +  orcDatas[tooltipItems.index]
+      //    beforeLabel : function(tooltipItems, data){
+      //      return "BI : " +  orcDatas[tooltipItems.index]
 
-         },
+      //    },
 
-         label : function(tooltipItems, data){
-           return "ORC : " + orcDatas[tooltipItems.index]
-           //return data.datasets[tooltipItems.datasetIndex].label[tooltipItems.index];
-         },
+      //    label : function(tooltipItems, data){
+      //      return "ORC : " + orcDatas[tooltipItems.index]
+      //      //return data.datasets[tooltipItems.datasetIndex].label[tooltipItems.index];
+      //    },
 
-         afterLabel : function(tooltipItems, data){
-           return "LC : " + orcDatas[tooltipItems.index]
-         }
-       }
+      //    afterLabel : function(tooltipItems, data){
+      //      return "LC : " + orcDatas[tooltipItems.index]
+      //    }
+      //  }
+      enabled : false,
+      custom : customTooltips
       
     },
     scales: {
