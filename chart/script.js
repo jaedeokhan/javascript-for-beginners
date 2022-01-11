@@ -86,7 +86,7 @@ var b_customTooltips = function(tooltip) {
 
 //=====================================================================
 
-var customTooltips = function(tooltip){
+var customTooltips = function(tooltipModel){
   // Tooltip Element
   let tooltipEl = document.getElementById('chartjs-tooltip');
 
@@ -99,13 +99,12 @@ var customTooltips = function(tooltip){
   }
 
   // Hide if no tooltip
-  const tooltipModel = tooltip;
   if (tooltipModel.opacity === 0) {
       tooltipEl.style.opacity = '0';
       return;
   }
 
-  // Set caret Position (above, below,no-transform ).As I need above I don't delete that class
+  // Set caret Position (above, below,no-transform ).As I need above I don't delete that class  
   tooltipEl.classList.remove('below', 'no-transform');
 
 
@@ -126,8 +125,12 @@ var customTooltips = function(tooltip){
           </div>
           <div style="display: flex; padding: 1.2rem; background-color: white">
               <div style="display: flex;  flex-direction: column;  font-family: 'Poppins'; font-size: 14px">
-                  <div>BIC : <span style="font-weight: 600">${bicList[currentIndex]}</span></div>
-                  <div>LC  : <span style="font-weight: 600">${lcList[currentIndex]}</span></div>
+                  <div>
+                    <span style="text-align: left">BIC : </span><span style="text-align: right; font-weight: 600">${bicList[currentIndex]}</span>
+                  </div>
+                  <div>
+                    <span>LC  : </span><span style="font-weight: 600">${lcList[currentIndex]}</span>
+                  </div>
                   <div>ORC : <span style="font-weight: 600">${orcList[currentIndex]}</span></div>
               </div>
           </div>
@@ -147,6 +150,92 @@ var customTooltips = function(tooltip){
   tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
   tooltipEl.style.pointerEvents = 'none';
 }
+
+var customTooltips3 = function(tooltipModel){
+                // Tooltip Element
+  var tooltipEl = document.getElementById('chartjs-tooltip');
+
+  // Create element on first render
+  if (!tooltipEl) {
+      tooltipEl = document.createElement('div');
+      tooltipEl.id = 'chartjs-tooltip';
+      tooltipEl.innerHTML = '<table></table>';
+      document.body.appendChild(tooltipEl);
+  }
+
+  // Hide if no tooltip
+  if (tooltipModel.opacity === 0) {
+      tooltipEl.style.opacity = 0;
+      return;
+  }
+
+  // Set caret Position
+  tooltipEl.classList.remove('above', 'below', 'no-transform');
+  if (tooltipModel.yAlign) {
+      tooltipEl.classList.add(tooltipModel.yAlign);
+  } else {
+      tooltipEl.classList.add('no-transform');
+  }
+
+  function getBody(bodyItem) {
+      return bodyItem.lines;
+  }
+
+  // Set Text
+  if (tooltipModel.body) {
+      var titleLines = tooltipModel.title || [];
+      var bodyLines = tooltipModel.body.map(getBody);
+
+      var innerHtml = '<thead>';
+
+      titleLines.forEach(function(title) {
+          innerHtml += '<tr><th>' + title + '</th></tr>';
+      });
+      innerHtml += '</thead><tbody>';
+
+      bodyLines.forEach(function(body, i) {
+          var colors = tooltipModel.labelColors[i];
+          var style = 'background:' + colors.backgroundColor;
+          style += '; border-color:' + colors.borderColor;
+          style += '; border-width: 2px';
+          var span = '<span style="' + style + '"></span>';
+          innerHtml += '<tr><td>' + span + body + '</td></tr>';
+      });
+      innerHtml += '</tbody>';
+
+      var tableRoot = tooltipEl.querySelector('table');
+      tableRoot.innerHTML = innerHtml;
+  }
+
+  // `this` will be the overall tooltip
+  var position = this._chart.canvas.getBoundingClientRect();
+
+  // Display, position, and set styles for font
+  tooltipEl.style.opacity = 1;
+  tooltipEl.style.position = 'absolute';
+  tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+  tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+  tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+  tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
+  tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+  tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+  tooltipEl.style.pointerEvents = 'none';
+
+};
+
+const footer = (tooltipItems) => {
+  let sum = 0;
+  var value = 123;
+  console.log(tooltipItems);
+
+  tooltipItems.forEach(function(tooltipItem) {
+
+    console.log(tooltipItem.index);
+    sum += tooltipItem;
+    
+  });
+  return 'BI : \t' + sum + "\r\n test : " + value;
+};
 
 var myChart = new Chart(ctx, {
   type : 'bar',
@@ -178,9 +267,34 @@ var myChart = new Chart(ctx, {
       //mode: 'index',
       //position: 'nearest',
       // Disable the on-canvas tooltip
-      enabled: false,
-      custom : customTooltips
-  
+      //enabled: false,
+       enabled : true,
+       displayColors : false,
+       callbacks : {
+         title : function(tooltipItems, data){
+           console.log(data.datasets[tooltipItems.datasetIndex]);
+           return "2021년" + months[tooltipItems[0].index];
+         },
+
+         beforeBody : function(tooltipItems, data){
+           return "\r";
+         },
+
+         beforeLabel : function(tooltipItems, data){
+           return "BI : " +  orcDatas[tooltipItems.index]
+
+         },
+
+         label : function(tooltipItems, data){
+           return "ORC : " + orcDatas[tooltipItems.index]
+           //return data.datasets[tooltipItems.datasetIndex].label[tooltipItems.index];
+         },
+
+         afterLabel : function(tooltipItems, data){
+           return "LC : " + orcDatas[tooltipItems.index]
+         }
+       }
+      
     },
     scales: {
       xAxes : [{
